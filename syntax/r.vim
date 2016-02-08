@@ -5,16 +5,20 @@
 " 		      Tom Payne <tom@tompayne.org>
 " Contributor:        Johannes Ranke <jranke@uni-bremen.de>
 " Homepage:           https://github.com/jalvesaq/R-Vim-runtime
-" Last Change:	      Tue Apr 07, 2015  04:39PM
+" Last Change:	      Thu Feb 04, 2016  10:51AM
 " Filenames:	      *.R *.r *.Rhistory *.Rt
 "
 " NOTE: The highlighting of R functions is defined in
 " runtime files created by a filetype plugin, if installed.
 "
 " CONFIGURATION:
-"   syntax folding can be turned on by
+"   Syntax folding can be turned on by
 "
 "      let r_syntax_folding = 1
+"
+"   ROxygen highlighting can be turned off by
+"
+"      let r_hl_roxygen = 0
 "
 " Some lines of code were borrowed from Zhuojun Chen.
 
@@ -24,8 +28,11 @@ endif
 
 setlocal iskeyword=@,48-57,_,.
 
-if exists("g:r_syntax_folding")
+if exists("g:r_syntax_folding") && g:r_syntax_folding
   setlocal foldmethod=syntax
+endif
+if !exists("g:r_hl_roxygen")
+  let g:r_hl_roxygen = 1
 endif
 
 syn case match
@@ -35,18 +42,20 @@ syn match rCommentTodo contained "\(BUG\|FIXME\|NOTE\|TODO\):"
 syn match rComment contains=@Spell,rCommentTodo,rOBlock "#.*"
 
 " Roxygen
-syn region rOBlock start="^\s*\n#\{1,2}' " start="\%^#\{1,2}' " end="^\(#\{1,2}'\)\@!" contains=rOTitle,rOKeyword,rOExamples,@Spell keepend
-syn region rOTitle start="^\s*\n#\{1,2}' " start="\%^#\{1,2}' " end="^\(#\{1,2}'\s*$\)\@=" contained contains=rOCommentKey
-syn match rOCommentKey "#\{1,2}'" containedin=rOTitle contained
+if g:r_hl_roxygen
+  syn region rOBlock start="^\s*\n#\{1,2}' " start="\%^#\{1,2}' " end="^\(#\{1,2}'\)\@!" contains=rOTitle,rOKeyword,rOExamples,@Spell keepend
+  syn region rOTitle start="^\s*\n#\{1,2}' " start="\%^#\{1,2}' " end="^\(#\{1,2}'\s*$\)\@=" contained contains=rOCommentKey
+  syn match rOCommentKey "#\{1,2}'" containedin=rOTitle contained
 
-syn region rOExamples start="^#\{1,2}' @examples.*"rs=e+1,hs=e+1 end="^\(#\{1,2}' @.*\)\@=" end="^\(#\{1,2}'\)\@!" contained contains=rOKeyword
+  syn region rOExamples start="^#\{1,2}' @examples.*"rs=e+1,hs=e+1 end="^\(#\{1,2}' @.*\)\@=" end="^\(#\{1,2}'\)\@!" contained contains=rOKeyword
 
-syn match rOKeyword contained "@\(param\|return\|name\|rdname\|examples\|include\|docType\)"
-syn match rOKeyword contained "@\(S3method\|TODO\|aliases\|alias\|assignee\|author\|callGraphDepth\|callGraph\)"
-syn match rOKeyword contained "@\(callGraphPrimitives\|concept\|exportClass\|exportMethod\|exportPattern\|export\|formals\)"
-syn match rOKeyword contained "@\(format\|importClassesFrom\|importFrom\|importMethodsFrom\|import\|keywords\|useDynLib\)"
-syn match rOKeyword contained "@\(method\|noRd\|note\|references\|seealso\|setClass\|slot\|source\|title\|usage\)"
-syn match rOKeyword contained "@\(family\|template\|templateVar\|description\|details\|inheritParams\|field\)"
+  syn match rOKeyword contained "@\(param\|return\|name\|rdname\|examples\|example\|include\|docType\)"
+  syn match rOKeyword contained "@\(S3method\|TODO\|aliases\|alias\|assignee\|author\|callGraphDepth\|callGraph\)"
+  syn match rOKeyword contained "@\(callGraphPrimitives\|concept\|exportClass\|exportMethod\|exportPattern\|export\|formals\)"
+  syn match rOKeyword contained "@\(format\|importClassesFrom\|importFrom\|importMethodsFrom\|import\|keywords\|useDynLib\)"
+  syn match rOKeyword contained "@\(method\|noRd\|note\|references\|seealso\|setClass\|slot\|source\|title\|usage\)"
+  syn match rOKeyword contained "@\(family\|template\|templateVar\|description\|details\|inheritParams\|field\)"
+endif
 
 
 if &filetype == "rhelp"
@@ -235,11 +244,13 @@ hi def link rStatement   Statement
 hi def link rString      String
 hi def link rStrError    Error
 hi def link rType        Type
-hi def link rOKeyword    Title
-hi def link rOBlock      Comment
-hi def link rOTitle      Title
-hi def link rOCommentKey Comment
-hi def link rOExamples   SpecialComment
+if g:r_hl_roxygen
+  hi def link rOKeyword    Title
+  hi def link rOBlock      Comment
+  hi def link rOTitle      Title
+  hi def link rOCommentKey Comment
+  hi def link rOExamples   SpecialComment
+endif
 
 
 let b:current_syntax="r"

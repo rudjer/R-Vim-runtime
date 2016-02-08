@@ -573,13 +573,31 @@ flights %>%
     endop <- "END"
 x <- 0
 
-############################################################################
-## indent/r.vim starts to make mistakes here
+foo <- function(){
+    xxx
+    if (ismat) for (i in seq_len(differences)) r <- r[i1, , drop = FALSE] -
+        r[-nrow(r):-(nrow(r) - lag + 1), , drop = FALSE]
+    else for (i in seq_len(differences))
+        r <- r[i1] - r[-length(r):-(length(r) - lag + 1L)]
+    r
+    if(is.null(width)) width <- 0L
+    else if(width < 0L) { flag <- "-"; width <- -width }
+    format.default(x, width=width,
+                   justify = if(flag=="-") "left" else "right")
+    xxx
+}
+
+a <- theta1$A %>%
+    { .[1:(nrow(.) - 1), 1:(ncol(.) - 1)] }
+a[a >= thres] <- 1
 
 y = x &
     x
 y = x |
     x
+
+############################################################################
+## indent/r.vim starts to make mistakes here
 
 test <- this('the function works',
              {
@@ -621,20 +639,6 @@ data.frame <- function(..., row.names = NULL, check.rows = FALSE, check.names = 
 }
 
 
-foo <- function(){
-    xxx
-    if (ismat) for (i in seq_len(differences)) r <- r[i1, , drop = FALSE] -
-        r[-nrow(r):-(nrow(r) - lag + 1), , drop = FALSE]
-    else for (i in seq_len(differences))
-        r <- r[i1] - r[-length(r):-(length(r) - lag + 1L)]
-    r
-    if(is.null(width)) width <- 0L
-    else if(width < 0L) { flag <- "-"; width <- -width }
-    format.default(x, width=width,
-                   justify = if(flag=="-") "left" else "right")
-    xxx
-}
-
 try <- function(expr, silent = FALSE) {
     if(file == "") file <- stdin()
     else {
@@ -655,6 +659,12 @@ try <- function(expr, silent = FALSE) {
     class(f) <- c(if(ordered)"ordered", "factor")
     f
 }
+
+err <- (a - A.real) %>%
+    {
+        ./2
+    }
+errors <- c(errors, err)
 
 flights %>%
     group <- by(year, month, day) %>%
